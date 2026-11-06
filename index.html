@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miestne správy z Jämtlandu</title>
+<style>
+    :root {
+      color-scheme: light;
+      --forest: #263e31; --snow: #f6f7f0; --meadow: #ecebdc;
+      --copper: #b96f37; --muted: #5e705e; --line: #cad2c1;
+      --sans: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 2rem; }
+    body { margin: 0; background: var(--snow); color: var(--forest); font: 16px/1.7 var(--sans); }
+    a { color: inherit; text-underline-offset: .25em; text-decoration-thickness: 1px; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--copper); outline-offset: 5px; }
+    main { max-width: 1450px; padding: 0 64px; margin: auto; }
+    .skip-link { position: fixed; top: -6rem; left: 1rem; z-index: 2; background: white; padding: .5rem 1rem; }
+    .skip-link:focus { top: 1rem; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .brand { font-size: 27px; font-weight: 750; letter-spacing: -1.5px; text-decoration: none; }
+    .brand-note { font-size: 12px; color: var(--muted); margin-left: 15px; }
+    .edition { font-size: 13px; color: var(--muted); margin: 0; text-align: right; }
+    .report-header { position: relative; padding: 50px 0 45px; overflow: hidden; }
+    .period { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .3rem; color: var(--muted); font-size: 13px; }
+    h1 { position: relative; z-index: 1; font-size: clamp(38px, 4.2vw, 62px); font-weight: 600; line-height: 1.1; letter-spacing: -.045em; margin: 16px 0 18px; }
+    .intro { position: relative; z-index: 1; font-size: 17px; color: var(--muted); margin: 0; max-width: 65%; }
+    .mountains { position: absolute; right: -60px; bottom: 0; width: 420px; height: 210px; opacity: .5; color: #6e8263; }
+    .mountain-contour { stroke: #9dad8f; stroke-width: .8; }
+    .mountain-snow { fill: #e1e8d6; stroke: currentColor; }
+    .area-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 21px 0; border-block: 1px solid var(--line); }
+    .area-nav a { padding: 8px 18px; border-radius: 24px; background: #e7ebdd; font-size: 14px; font-weight: 600; text-decoration: none; }
+    .area-nav a:hover, .area-nav a:focus-visible { background: #334f38; color: white; }
+    .nav-count { font-size: 12px; font-weight: 400; margin-left: 10px; }
+    .area-nav .coverage-link { margin-left: auto; padding-inline: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 400; text-decoration: underline; }
+    .area-nav .coverage-link:hover { color: var(--forest); }
+    .area { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 35px; padding: 48px 0 34px; border-bottom: 1px solid var(--line); }
+    .section-heading { padding-top: 3px; }
+    h2 { font-size: 23px; font-weight: 650; line-height: 1.3; margin: 0 0 6px; letter-spacing: -.03em; overflow-wrap: anywhere; }
+    .section-count { font-size: 12px; color: var(--muted); }
+    .stories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 30px 36px; }
+    article { min-width: 0; }
+    article:first-child { grid-column: 1 / -1; padding: 26px 30px; background: var(--meadow); border-left: 4px solid var(--copper); }
+    h3 { font-size: 21px; line-height: 1.3; font-weight: 600; letter-spacing: -.025em; margin: 0 0 12px; overflow-wrap: anywhere; }
+    article:first-child h3 { font-size: 28px; }
+    .article-text { margin: 0; max-width: 70ch; white-space: pre-line; overflow-wrap: anywhere; }
+    article:first-child .article-text { font-size: 18px; }
+    .event-date { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+    .provenance { margin-top: 17px; font-size: 12px; color: var(--muted); }
+    .source-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 14px; }
+    .source-links li { min-width: 0; overflow-wrap: anywhere; }
+    .empty { margin: 0; color: var(--muted); }
+    .coverage { margin-top: 35px; padding: 22px 28px; background: #e7ebdd; }
+    .coverage > summary { padding: 0; font-size: 14px; }
+    .coverage-count { margin-top: 20px; color: var(--muted); font-size: 12px; }
+    .coverage details { border-top: 1px solid var(--line); }
+    summary { cursor: pointer; padding: 16px 0; font-size: 13px; overflow-wrap: anywhere; }
+    summary::marker { color: var(--copper); }
+    .source-name { margin-left: 5px; }
+    .status { display: inline-block; margin-left: 12px; color: var(--muted); font-size: 12px; }
+    .status-ok { color: #315e50; }
+    .coverage details p { margin: 0 0 20px; padding-left: 20px; font-size: 13px; overflow-wrap: anywhere; white-space: pre-line; }
+    .report-footer { padding: 30px 0; color: var(--muted); font-size: 12px; }
+    @media (max-width: 1000px) {
+      main { padding-inline: 35px; }
+      .area { grid-template-columns: 145px minmax(0, 1fr); gap: 25px; }
+      .stories { gap: 25px; }
+    }
+    @media (max-width: 800px) {
+      main { padding-inline: 25px; }
+      .area { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 32px; }
+      .section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; }
+      h2 { margin: 0; }
+      .report-header { padding: 35px 0; }
+      .mountains { width: 230px; right: -65px; opacity: .35; }
+      .intro { max-width: 75%; font-size: 15px; }
+      .area-nav { gap: 8px; }
+      .area-nav a { font-size: 12px; padding: 8px 12px; }
+      .area-nav .coverage-link { margin-left: 0; padding: 6px 0; }
+    }
+    @media (max-width: 580px) {
+      .masthead { padding-block: 22px; }
+      .brand-note { display: none; }
+      .edition { font-size: 12px; }
+      h1 { font-size: 38px; }
+      .stories { grid-template-columns: minmax(0, 1fr); }
+      article:first-child { padding: 24px; }
+      article:first-child h3 { font-size: 25px; }
+      .coverage { padding: 20px; }
+    }
+    @media print {
+      body { background: white; font-size: 11pt; }
+      main { padding: 0; }
+      .area-nav, .skip-link, .mountains { display: none; }
+      .report-header { padding-block: 20px; }
+      h1 { font-size: 28pt; }
+      .area, .stories { display: block; }
+      .section-heading { margin-bottom: 15px; }
+      article, article:first-child { padding: 15px 0; background: none; border: 0; break-inside: avoid; }
+      .coverage { background: none; border: 1px solid var(--line); }
+      details::details-content { content-visibility: visible; }
+    }
+    </style>
+</head>
+<body>
+<a class="skip-link" href="#content">Preskočiť na správy</a>
+<main id="content"><div class="masthead" id="top">
+<div><a class="brand" href="#top">Jnews</a><span class="brand-note">Gräftåvallen a okolie</span></div>
+<p class="edition">Miestne správy po slovensky</p></div>
+<header class="report-header"><div class="period">
+<time datetime="2026-10-30T15:28:38.783011Z">30. 10. 2026</time>
+<span>–</span>
+<time datetime="2026-11-06T15:28:38.783011Z">6. 11. 2026</time></div>
+<h1>Jämtland, zblízka.</h1>
+<p class="intro">Čo sa deje pod horami. Od Gräftåvallenu po celý región.</p>
+<svg class="mountains" viewBox="0 0 420 210" aria-hidden="true" focusable="false" fill="none">
+<path d="M0 205L75 145l42 24 90-121 54 67 38-26 121 114" stroke="currentColor" stroke-width="1.3"/>
+<path class="mountain-contour" d="M50 210L149 128l58 28 66-60 147 109M0 180l87-64 41 19 79-111 68 74 42-23 103 100M100 210l82-34 83 21 69-44 86 51"/>
+<path class="mountain-snow" d="M180 85l27-37 31 39-30-12-28 10"/></svg></header>
+<nav class="area-nav" aria-label="Oblasti">
+<a href="#graftavallen">Gräftåvallen<span class="nav-count" aria-label="3 správy">3</span></a>
+<a href="#ostersund">Östersund<span class="nav-count" aria-label="9 správ">9</span></a>
+<a href="#berg">Berg<span class="nav-count" aria-label="2 správy">2</span></a>
+<a href="#jamtland">Jämtland<span class="nav-count" aria-label="9 správ">9</span></a>
+<a class="coverage-link" href="#coverage">Pokrytie zdrojov</a></nav>
+<section class="area" id="graftavallen" aria-labelledby="graftavallen-heading">
+<div class="section-heading"><h2 id="graftavallen-heading">Gräftåvallen</h2>
+<span class="section-count">3 správy</span></div><div class="stories">
+<article>
+<h3>Zimná sezóna a nábor personálu</h3>
+<p class="article-text">Zimná sezóna v Gräftåvallene sa začne 19. decembra. Fjällgården hľadá kuchára aj výpomoc do obsluhy.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://graftavallen.se/jobba-med-oss/">Gräftåvallen / Fjällgården</a></li>
+</ul></div></article>
+<article>
+<h3>Fjällgården je ponúkaný na predaj</h3>
+<p class="article-text">Sestry Anneli a Carola ponúkajú Fjällgården na predaj. Záujemcovia môžu kontaktovať makléra Calleho Roosa.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://graftavallen.se/fjallgarden-till-salu/">Gräftåvallen / Fjällgården</a></li>
+</ul></div></article>
+<article>
+<h3>Vianočný stôl s rezerváciou do 13. decembra</h3>
+<p class="article-text">Fjällgården pripravuje na Štedrý deň vianočný stôl od 12.00 do 16.00. Cena pre dospelého je 745 SEK; stôl si treba rezervovať telefonicky na 0643-520 12 do 13. decembra.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://graftavallen.se/julbord-2026/">Gräftåvallen / Fjällgården</a></li>
+</ul></div></article>
+</div></section>
+<section class="area" id="ostersund" aria-labelledby="ostersund-heading">
+<div class="section-heading"><h2 id="ostersund-heading">Östersund</h2>
+<span class="section-count">9 správ</span></div><div class="stories">
+<article>
+<h3>Lyžiarsky štadión pripravuje sobotné otvorenie</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T10:45:05Z">5. 11. 2026</time></p>
+<p class="article-text">Lyžiarsky štadión v Östersunde plánuje otvoriť časť tratí v sobotu. Na trate rozvážajú sneh z približne 60 000 m³ zásoby uskladnenej cez leto.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/nu-laggs-snon-ut-pa-skidstadion-i-ostersund-premiar-till-helgen">SVT Nyheter Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Päť záujemcov o obchodnú plochu v Lillänge</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-03T16:04:51Z">3. 11. 2026</time></p>
+<p class="article-text">Mestské vedenie pokračuje v príprave obchodného využitia takzvaného pozemku Biltema napriek výhradám úradníkov k doprave v Odenskogu. Eviduje päť záujemcov; P4 medzi novými uvádza G&amp;K Blanks Fastigheter a Multi Challenge. Územné plánovanie a posudzovanie jednotlivých návrhov ešte pokračuje.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/ostersund-gar-vidare-med-biltematomten-fem-vill-etablera-handel">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335762">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Mesto prijalo pokutu za ohrozenie mladistvého brigádnika</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-04T09:12:15Z">4. 11. 2026</time></p>
+<p class="article-text">Östersund prijal pokutu 125 000 SEK za ohrozenie mladistvého brigádnika v zariadení pre ľudí s demenciou. V auguste 2025 ho napadol klient po tom, čo zostal pri práci osamote.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/vardtagare-tog-strypgrepp-pa-minderarig-feriejobbare-i-ostersund">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.op.se/ostersund/sommarjobbare-attackerades-kommunen-far-bota/">Östersunds-Posten</a></li>
+</ul></div></article>
+<article>
+<h3>Podozrivá zásielka v Lugnviku bola neškodná</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-06T10:20:06Z">6. 11. 2026</time></p>
+<p class="article-text">Podozrivá zásielka v pracovisku Försäkringskassan v Lugnviku vyvolala v piatok zásah polície a záchranných zložiek. Polícia ju po kontrole vyhodnotila ako neškodnú.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/larm-om-misstankt-forsandelse-i-lugnvik">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335915">P4 Jämtland</a></li>
+<li><a href="https://www.op.se/ostersund/larm-om-misstankt-forsandelse/">Östersunds-Posten</a></li>
+</ul></div></article>
+<article>
+<h3>Obavy o mladých na autobusovom námestí</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-03T19:57:00Z">3. 11. 2026</time></p>
+<p class="article-text">Mesto a polícia upozornili rodičov na predaj alkoholu a tabakových výrobkov mladým na Gustav III:s torg. V liste ich vyzývajú, aby sa s deťmi porozprávali o tom, čo sa na autobusovom námestí deje.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.sverigesradio.se/artikel/9333704">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Časť škôlky v Tandsbyne sa má vyprázdniť skôr</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-06T04:56:00Z">6. 11. 2026</time></p>
+<p class="article-text">V škôlke v Tandsbyne našli pleseň a drevokaznú hubu. Časť prevádzky sa má preto presťahovať už na jarný semester, skôr než pôvodne plánovanú jeseň 2027.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.sverigesradio.se/artikel/9334217">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Nové cestné napojenie a obmedzený výdaj balíkov</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T15:00:00Z">5. 11. 2026</time></p>
+<p class="article-text">V piatok sa otvára pravé odbočenie z Hagvägen na E14 smer Brunflo a Sundsvall. V Brunfle zatiaľ vandalizmus v predajni viedol k zatvoreniu večerného výdaja balíkov na neurčito.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.ltz.se/ostersund/pa-fredag-oppnar-nya-hogersvangen-i-lillange/">Länstidningen Östersund</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335073">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Ida Brånn má viesť základné školy</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-06T08:05:00Z">6. 11. 2026</time></p>
+<p class="article-text">Vedenie základných škôl v Östersunde prevezme 1. februára Ida Brånn, ktorá dnes pôsobí ako riaditeľka školy v Strängnäse.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.ltz.se/ostersund/hon-ska-leda-ostersunds-grundskolor/">Länstidningen Östersund</a></li>
+</ul></div></article>
+<article>
+<h3>Rolf Lassgård prišiel na filmovú premiéru</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-04T12:31:18Z">4. 11. 2026</time></p>
+<p class="article-text">Utorková premiéra filmu Arne Goes To Space v Biostaden vypredala dve sály. S návštevníkmi sa osobne stretol hlavný predstaviteľ a rodák z Östersundu Rolf Lassgård.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/lassgard-drog-fullt-hus-gastade-premiarvisning-i-ostersund">SVT Nyheter Jämtland</a></li>
+</ul></div></article>
+</div></section>
+<section class="area" id="berg" aria-labelledby="berg-heading">
+<div class="section-heading"><h2 id="berg-heading">Berg</h2>
+<span class="section-count">2 správy</span></div><div class="stories">
+<article>
+<h3>Dentalum pripravuje zubnú ambulanciu v Myrvikene</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-02T07:00:11Z">2. 11. 2026</time></p>
+<p class="article-text">Obec 2. novembra oznámila vznik kliniky Dentalum v bývalých priestoroch Folktandvården. Otvorenie pre pacientov sa predpokladá na prelome rokov; úpravy priestorov a príprava náboru už prebiehajú. Prevádzka má časom zamestnávať dvoch zubárov a ďalší personál.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://berg.se/kommun-och-politik/verksamhet-och-organisation/nyheter/nyheter/2026-11-02-ny-tandlakare-i-myrviken">Bergs kommun</a></li>
+</ul></div></article>
+<article>
+<h3>M a C plánujú menšinové vedenie obce</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-02T14:26:47Z">2. 11. 2026</time></p>
+<p class="article-text">Moderaterna a Centerpartiet plánujú menšinové vedenie Bergs kommun so 14 z 31 mandátov. O rozpočte na rok 2027 sa má hlasovať 26. novembra a ďalšie personálne voľby sú naplánované na 16. decembra.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://berg.se/kommun-och-politik/verksamhet-och-organisation/nyheter/nyheter/2026-11-02-politiskt-styre-i-bergs-kommun">Bergs kommun</a></li>
+</ul></div></article>
+</div></section>
+<section class="area" id="jamtland" aria-labelledby="jamtland-heading">
+<div class="section-heading"><h2 id="jamtland-heading">Jämtland</h2>
+<span class="section-count">9 správ</span></div><div class="stories">
+<article>
+<h3>Guldgalan ocenila podnikateľov z regiónu</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T17:42:17Z">5. 11. 2026</time></p>
+<p class="article-text">Na 26. ročníku Guldgalan v Östersunde rozdali 16 podnikateľských cien. Ocenenie získala aj Åsa Strandberg za textilnú recykláciu a Camilla Hassberg s Hugom Nylanderom z Gamla Teatern za pohostinnosť.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/jamtlands-lans-foretagare-samlades-pa-guldgalan-betyder-jattemycket">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335382">P4 Jämtland</a></li>
+<li><a href="https://www.ltz.se/ostersund/camilla-och-hugo-prisas-for-sitt-vardskap-i-ostersund/">Länstidningen Östersund</a></li>
+</ul></div></article>
+<article>
+<h3>Most cez Mittån môže otvoriť 11. novembra</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T09:37:03Z">5. 11. 2026</time></p>
+<p class="article-text">Fortum plánuje znovu otvoriť poškodený most pri Långå 11. novembra po oprave vozovky a kontrole. Po havárii priehrady sa zároveň vyhodnocujú škody na rybách a neresiskách; zvažuje sa aj odstránenie poškodenej priehrady.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/bron-over-mittan-kan-oppna-nasta-vecka">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/se-konsekvenserna-av-dammhaveriet-i-mittan-massa-doda-yngel">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335001">P4 Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9334718">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Uzavretý most v Strömsunde naďalej komplikuje dochádzanie</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T04:30:05Z">5. 11. 2026</time></p>
+<p class="article-text">Uzavretý most zvyšuje dopyt po ubytovaní v Strömsunde a dochádzajúcim chýbajú parkovacie miesta s predohrevom auta. Most by sa podľa súčasného odhadu mal pre autá otvoriť 31. januára 2027.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/trasig-stromsundsbro-ger-hogtryck-pa-hotell-manga-behover-boende">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9334665">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Výpadok v Åre zasiahol aj zdravotné stredisko</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-04T11:39:00Z">4. 11. 2026</time></p>
+<p class="article-text">Auto pri výmene pneumatík zišlo zo svahu do elektrickej skrine a pripravilo o prúd približne 40 odberateľov v Åre vrátane zdravotného strediska. Väčšina mala elektrinu späť o 14.00. Samostatné štvrtkové výpadky v západnom Jämtlande už Jämtkraft odstránil.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/bil-rullande-in-i-elskap-i-are-orsakade-stromavbrott">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9334330">P4 Jämtland</a></li>
+<li><a href="https://www.sverigesradio.se/artikel/9335041">P4 Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Ullådalsstugan rastie, pokračujú otázky okolo ochrany Ullån</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-03T04:30:04Z">3. 11. 2026</time></p>
+<p class="article-text">V Ullådalen pri Åre rastie komplex so 66 apartmánmi, povolený ako apartmánový hotel. Staviteľ tvrdí, že chráni susednú rieku Ullån, miestni obyvatelia však upozorňujú na zakalenú vodu pri stavbe.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/ny-syns-ulladalsstugan-fran-alla-hall">SVT Nyheter Jämtland</a></li>
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/byggentreprenoren-sa-ska-ullan-skyddas-vi-tanker-pa-ullan-entreprenoren-om-hur-ullan-skyddas-dammar-och-faror-ska-skydda-ullan">SVT Nyheter Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>V Bräcke vyšetrujú podvod za 580 000 SEK</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-03T10:15:52Z">3. 11. 2026</time></p>
+<p class="article-text">Polícia v Bräcke vyšetruje podvod, pri ktorom mala žena vo veku nad 80 rokov prísť približne o 580 000 SEK. Peniaze poslala mužovi, ktorý jej sľuboval pomoc s vrátením peňazí z predchádzajúceho podvodu.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/aldre-kvinna-i-bracke-bedragen-pa-580-000">SVT Nyheter Jämtland</a></li>
+</ul></div></article>
+<article>
+<h3>Vo Vemdalene otvorili novú stanicu záchrannej služby</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-06T02:04:00Z">6. 11. 2026</time></p>
+<p class="article-text">Nová stanica záchrannej služby vo Vemdalene sa otvorila skôr, než sa pôvodne očakávalo. Nahrádza priestory, ktoré už boli pre prevádzku príliš tesné.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.jamtlandstidning.se/haerjedalen-jt26v46/nya-ambulansstationen-i-vemdalen-har-oeppnat/331805">Jämtlands Tidning</a></li>
+</ul></div></article>
+<article>
+<h3>Engcon investuje v Strömsunde</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-05T16:32:00Z">5. 11. 2026</time></p>
+<p class="article-text">Engcon investuje 18 miliónov SEK do rozšírenia výroby v Strömsunde. Napriek slabšiemu prílevu objednávok sa pripravuje na opätovný rast predaja.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.jamtlandstidning.se/naeringsliv-stroemsund/vikande-orderingang-men-engcon-storsatsar-i-stroemsund/330912">Jämtlands Tidning</a></li>
+</ul></div></article>
+<article>
+<h3>Ragunda medzi najštedrejšími v zbierke Världens Barn</h3>
+<p class="event-date">Dátum: <time datetime="2026-11-03T14:00:07Z">3. 11. 2026</time></p>
+<p class="article-text">Ragunda je v priebežnom poradí zbierky Världens Barn štvrtá medzi 290 švédskymi obcami. Obyvatelia vyzbierali takmer 200 000 SEK, teda 38,50 SEK na osobu; konečné výsledky budú 16. novembra.</p>
+<div class="provenance"><ul class="source-links" aria-label="Zdroje správy">
+<li><a href="https://www.svt.se/nyheter/lokalt/jamtland/ragunda-i-topp-nar-pengar-till-varldens-barn-samlas-in">SVT Nyheter Jämtland</a></li>
+</ul></div></article>
+</div></section>
+<details class="coverage" id="coverage" aria-labelledby="coverage-heading">
+<summary id="coverage-heading">Pokrytie zdrojov</summary>
+<p class="coverage-count">Počet zdrojov: 9</p>
+<details><summary><span class="source-name">P4 Jämtland</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 20 podkladov; články aj titulná stránka vracajú HTTP 403, dostupné sú RSS ukážky. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">SVT Nyheter Jämtland</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 20 podkladov; výber je obmedzený na prvých 20 z 34 nájdených článkov. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">Gräftåvallen / Fjällgården</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 4 podkladov; načítané oznamy nemajú doložený dátum publikovania; sociálne siete neposkytli extrahovateľné datované príspevky. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">Gräftåvallen / Fjällgården – Facebook (https://www.facebook.com/graftavallen/)</span>
+<span class="status">unsupported</span></summary><p>Verejný profil bol načítaný, ale bez extrahovateľného datovaného textu príspevkov. Obsah sociálnej siete nie je pokrytý.</p></details>
+<details><summary><span class="source-name">Gräftåvallen / Fjällgården – Instagram (https://www.instagram.com/fjallgarden_graftavallen/)</span>
+<span class="status">unsupported</span></summary><p>Verejný profil bol načítaný, ale bez extrahovateľného datovaného textu príspevkov. Obsah sociálnej siete nie je pokrytý.</p></details>
+<details><summary><span class="source-name">Bergs kommun</span>
+<span class="status status-ok">Dostupný</span></summary><p>Pri poslednom zbere uložených 10 podkladov; verejné články dostupné, ide o ohraničený výber aktuálneho webu. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">Östersunds-Posten</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 20 podkladov; iba verejné ukážky, prvých 20 z 99 kandidátov. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">Länstidningen Östersund</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 20 podkladov; iba verejné ukážky, prvých 20 z 97 kandidátov. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+<details><summary><span class="source-name">Jämtlands Tidning</span>
+<span class="status">Čiastočne dostupný</span></summary><p>Pri poslednom zbere uložených 20 podkladov; iba verejné ukážky, prvých 20 z 35 kandidátov. Archív sa začal plniť až 6. novembra; celý týždeň nemusí byť pokrytý. Skoršie skúšobné zbery mali nižší limit požiadaviek.</p></details>
+</details>
+<footer class="report-footer">Viac informácií nájdete v pôvodných zdrojoch pri správach.</footer>
+</main></body></html>
